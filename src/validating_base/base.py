@@ -1,4 +1,4 @@
-"""The main functionality of `new_project_readable_name`."""
+"""The main functionality of `validating-base`."""
 
 import logging
 from pathlib import Path
@@ -16,7 +16,7 @@ class BaseClass:
     """Everything in the project comes back to here."""
 
     def __init__(self, config_file: str) -> None:
-        """Initialises the base class for `new_project_name` by loading the config and setting up a logger.
+        """Initialises the base class for `validating_base` by loading the config and setting up a logger.
 
         Args:
             config_file (str): Path to a config file containing settings for the class.

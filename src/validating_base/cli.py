@@ -1,4 +1,4 @@
-"""CLI functionality of `new_project_readable_name`."""
+"""CLI functionality of `validating-base`."""
 
 import logging
 import sys
@@ -9,7 +9,7 @@ from ._helpers.nice_logger import VERBOSE_LEVEL, SuccessLogger
 
 
 def cli_main() -> None:
-    """CLI entrypoint for `new_project_readable_name`. Uses `new_project_name.BaseClass`."""
+    """CLI entrypoint for `validating-base`. Uses `validating_base.BaseClass`."""
     argparser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
     argparser.add_argument("-c", "--config", help="Path to config file", type=str, default="config.toml")
     argparser.add_argument("-v", "--verbose", help="Enable verbose logging", action="count", default=0)
@@ -23,7 +23,7 @@ def cli_main() -> None:
         print(f"Version: {__version__}")
         sys.exit(1)
 
-    package_logger: SuccessLogger = logging.getLogger("new_project_name")  # type: ignore
+    package_logger: SuccessLogger = logging.getLogger("validating_base")  # type: ignore
 
     # logging defaults to WARNING, then INFO, then DEBUG, then VERBOSE
 

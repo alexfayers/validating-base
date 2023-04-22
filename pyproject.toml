@@ -3,17 +3,17 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "new_project_readable_name"
-version = "3.6.0"
-description = "new_project_description"
-authors = ["new_project_author <new_project_author@example.com>"]
+name = "validating-base"
+version = "0.1.0"
+description = "An epic project called validating-base, by alexfayers!"
+authors = ["alexfayers <alexfayers@example.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "new_project_name", from = "src"}]
-include = ["LICENSE", "src/new_project_name/py.typed", "src/new_project_name/VERSION"]
+packages = [{include = "validating_base", from = "src"}]
+include = ["LICENSE", "src/validating_base/py.typed", "src/validating_base/VERSION"]
 
 [tool.poetry.scripts]
-new_project_readable_name = "new_project_name:cli_main"
+validating-base = "validating_base:cli_main"
 
 [tool.poetry.dependencies]
 # Main project dependencies.
@@ -58,8 +58,8 @@ poetry-bumpversion = "^0.3.0"
 
 ### Tool configs ###
 
-[tool.poetry_bumpversion.file."src/new_project_name/__init__.py"]
-[tool.poetry_bumpversion.file."src/new_project_name/VERSION"]
+[tool.poetry_bumpversion.file."src/validating_base/__init__.py"]
+[tool.poetry_bumpversion.file."src/validating_base/VERSION"]
 
 [tool.black]
 line-length = 120

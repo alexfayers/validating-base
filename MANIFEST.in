@@ -1,2 +1,2 @@
-include src/new_project_name/VERSION
-include src/new_project_name/py.typed
+include src/validating_base/VERSION
+include src/validating_base/py.typed
