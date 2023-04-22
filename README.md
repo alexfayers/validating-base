@@ -56,7 +56,7 @@ class ActionExample(ValidatingBaseClass):
         """
         for number in method_memo.arguments["number_list"]:
             if not isinstance(number, int):
-                raise TypeError(f"{number} is not an integer")    
+                raise TypeError(f"{number} is not an integer")
 ```
 
 Most of the time, an abstract base class will work. But, if you want the runtime validation then this library might be useful.

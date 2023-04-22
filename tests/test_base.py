@@ -5,7 +5,6 @@ import logging
 
 import pytest
 from typeguard import _CallMemo
-
 from validating_base import ValidatingBaseClass
 
 
