@@ -1,84 +1,143 @@
 """The main functionality of `validating-base`."""
 
 import logging
-from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import Any
 
-import toml
+from typeguard import (
+    _CallMemo,
+    check_argument_types,
+    check_return_type,
+    function_name,
+    qualified_name,
+)
 
-if TYPE_CHECKING:
-    from ._helpers.nice_logger import SuccessLogger
 
-D = TypeVar("D")
+class ValidatingBaseClass:
+    """A class which automatically validates itself.
 
+    The inputs and outputs of specified methods are validated through the use of the `validated_methods` class variable,
+    and any methods are are required to be implemented in child classes are defined within the `required_methods`
+    class variable.
 
-class BaseClass:
-    """Everything in the project comes back to here."""
+    A NotImplementedError is raised if a required method is not implemented in a child class.
+    A TypeError is raised if the input arguments to a validated method are not of the correct type.
+    A TypeError is raised if return value to a validated method is not of the correct type.
 
-    def __init__(self, config_file: str) -> None:
-        """Initialises the base class for `validating_base` by loading the config and setting up a logger.
+    Example usage can be seen in `validating_base.examples`.
+    """
 
-        Args:
-            config_file (str): Path to a config file containing settings for the class.
-        """
-        self.logger: SuccessLogger = logging.getLogger(__name__).getChild(self.__class__.__qualname__)  # type: ignore
+    required_methods: list[str] = []
+    """Methods that must be implemented in any child classes"""
+    validated_methods: list[str] = []
+    """Methods that must be validated in any child classes.
 
-        self._config = self._load_config(Path(config_file))
+    The `validate_XXX` naming scheme should be used when creating a validation function.
+    All `validate_XXX` methods should accept a single argument, which is a `_CallMemo` object.
+    """
 
-    def _log_and_raise_exception(self, message: str, *args: Any, **kwargs: Any) -> None:
-        """Logs an error and raises an exception.
+    _self_validated = False
+    """Internal flag to indicate whether the class itself has been validated."""
 
-        Args:
-            message (str): The message to log and raise.
-            *args (Any): Generic positional arguments
-            **kwargs (Any): Generic keyword arguments
+    def __init__(self) -> None:
+        """Initialises a `ValidatingBaseClass` instance."""
+        self.logger = logging.getLogger(__name__).getChild(self.__class__.__qualname__)
+
+        self._validate_self()
+
+    def _validate_self(self) -> None:
+        """Validate that the class has the specified methods defined.
+
+        Reads the required method from the `ValidatingBaseClass.required_methods` attribute.
 
         Raises:
-            Exception: The raised exception.
+            NotImplementedError: Raised if a required method is not defined.
         """
-        self.logger.error(message, *args, **kwargs)
-        raise Exception(message)
+        for required_method in self.required_methods:
+            method = getattr(self, required_method, None)
+            if not callable(method):
+                raise NotImplementedError(f"The {required_method} method must be defined.")
+        self._self_validated = True
+        self.logger.debug(f"Methods of '{qualified_name(self)}' are ok")
 
-    def _load_config(self, config_file: Path) -> dict:
-        """Loads the config file using toml.
+    def _validate_argument_types(self, method_memo: _CallMemo) -> None:
+        """Validate that the arguments to a method are the correct type.
 
         Args:
-            config_file (Path): Path to a config file containing settings for the class.
+            method_memo (_CallMemo): The `_CallMemo` which holds the method's typing information and arguments
 
-        Returns:
-            dict: The config file as a dictionary.
+        Raises:
+            TypeError: if there is an argument type mismatch
         """
-        self.logger.verbose("Loading config file from %s", config_file)
+        check_argument_types(method_memo)
+        self.logger.debug(f"Argument types for '{method_memo.func_name}' are ok")
 
-        try:
-            with open(config_file) as f:
-                try:
-                    config = toml.load(f)
-                except toml.TomlDecodeError:
-                    self._log_and_raise_exception("Config file '%s' is not valid TOML: %s", config_file)
-        except FileNotFoundError:
-            self._log_and_raise_exception("Config file '%s' does not exist!", config_file)
-
-        return config
-
-    def read_config(self, *path: str, default: D | None = None) -> Any | D:
-        """Reads a value from the config file.
+    def _validate_return_type(self, method_memo: _CallMemo, result: Any) -> None:
+        """Validate that the return value of a method is the correct type.
 
         Args:
-            *path (str): The path to the value in the config file.
-            default (Any): The default value to return if the path does not exist.
+            method_memo (_CallMemo): The `_CallMemo` which holds the method's typing information and arguments
+            result (Any): The actual result from the method
+
+        Raises:
+            TypeError: if there is a type mismatch in the return value
+        """
+        check_return_type(result, method_memo)
+        self.logger.debug(f"Return type of '{method_memo.func_name}' is ok")
+
+    def __getattribute__(self, __name: str) -> Any:
+        """Called when an attribute of the object is attempted to be accessed.
+
+        Ensures that child classes are structured correctly, and that the inputs for the methods specified
+        in `ValidatingBaseClass.validated_methods` are validated before a method is executed.
+
+        Args:
+            __name (str): The attribute which is being accessed
+
+        Raises:
+            NotImplementedError: Raised if a required validation method does not exist
 
         Returns:
-            Any: The value found at the path in the config file, or the default value if the path does not exist.
+            Any: The value of the attribute
         """
-        self.logger.verbose("Reading config value: %s", path)
+        method = super().__getattribute__(__name)
 
-        located_data = self._config
+        skip_methods = {"required_methods", "validated_methods", "_self_validated"}
 
-        for section in path:
-            try:
-                located_data = located_data[section]
-            except (KeyError, TypeError):
-                return default
+        if (
+            __name not in skip_methods
+            and callable(method)
+            and self._self_validated
+            and __name in self.validated_methods
+        ):
 
-        return located_data
+            def _validated(*args: Any, **kwargs: Any) -> Any:
+                """Decorator that runs the specified validator before the decorated method.
+
+                Returns:
+                    Any: The return value of the method
+                """
+                validator_name = f"validate_{__name}"
+                validator = getattr(self, validator_name, None)
+
+                if validator is None:
+                    raise NotImplementedError(f"The {__name} method does not have a validator ({validator_name})")
+
+                method_memo = _CallMemo(method, args=args, kwargs=kwargs)
+
+                self._validate_argument_types(method_memo)
+
+                validator(method_memo)
+
+                self.logger.debug(
+                    f"Inputs for '{function_name(method)}' are ok (validated using '{function_name(validator)})"
+                )
+
+                result = method(*args, **kwargs)
+
+                self._validate_return_type(method_memo, result)
+
+                return result
+
+            return _validated
+        else:
+            return method

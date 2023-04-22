@@ -3,17 +3,12 @@ __version__ = "0.1.0"
 
 import logging
 
-from ._helpers import ColoredFormatter as _ColoredFormatter
-from ._helpers import SuccessLogger as _SuccessLogger
-from .base import BaseClass
-from .cli import cli_main
+from .base import ValidatingBaseClass
 
 # set up logging for the package
-logging.setLoggerClass(_SuccessLogger)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
-console = logging.StreamHandler()
-console.setFormatter(_ColoredFormatter("[%(name)s] (%(levelname)s): %(message)s"))
-logger.addHandler(console)
+console_handler = logging.StreamHandler()
+logger.addHandler(console_handler)
 
-__all__ = ["BaseClass", "cli_main", "_helpers"]
+__all__ = ["ValidatingBaseClass"]

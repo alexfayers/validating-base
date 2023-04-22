@@ -12,13 +12,10 @@ readme = "README.md"
 packages = [{include = "validating_base", from = "src"}]
 include = ["LICENSE", "src/validating_base/py.typed", "src/validating_base/VERSION"]
 
-[tool.poetry.scripts]
-validating-base = "validating_base:cli_main"
-
 [tool.poetry.dependencies]
 # Main project dependencies.
 python = ">=3.9,<4.0"
-toml = "^0.10.2"
+typeguard = "^2.13.3"
 
 [tool.poetry.group.dev.dependencies]
 # Linters for use during development (e.g. via vscode).
