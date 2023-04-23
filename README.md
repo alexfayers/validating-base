@@ -44,17 +44,17 @@ class ActionExample(ValidatingBaseClass):
     required_methods: list[str] = ["action"]
     validated_methods: list[str] = ["action"]
 
-    def validate_action(self, method_memo: _CallMemo) -> None:
+    def validate_action(self, number_list: list[int]) -> None:
         """Validate that the data to be processed is in the correct format.
 
         Args:
-            method_memo (_CallMemo): The `_CallMemo` which holds the method's typing information and arguments
+            number_list (List[int]): The list of ints
 
         Raises:
             TypeError: Raised if the data is not the correct type
             ValueError: Raised if the types are correct, but there is an issue in the formatting
         """
-        for number in method_memo.arguments["number_list"]:
+        for number in number_list:
             if not isinstance(number, int):
                 raise TypeError(f"{number} is not an integer")
 ```

@@ -15,7 +15,8 @@ include = ["LICENSE", "src/validating_base/py.typed", "src/validating_base/VERSI
 [tool.poetry.dependencies]
 # Main project dependencies.
 python = ">=3.9,<4.0"
-typeguard = "^2.13.3"
+typeguard = "^3.0.2"
+mypy = "^1.2.0"
 
 [tool.poetry.group.dev.dependencies]
 # Linters for use during development (e.g. via vscode).
@@ -28,6 +29,7 @@ ruff = "^0.0.262"
 pytest = "^7.3.1"
 pytest-sugar = "^0.9.7"
 pytest-clarity = "^1.0.1"
+pytest-cov = "^4.0.0"
 
 [tool.poetry.group.lint.dependencies]
 # For linting via tox.
