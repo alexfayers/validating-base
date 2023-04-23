@@ -9,6 +9,3 @@ Changelog
 - Init. [alexfayers]
 - Initialise project! [alexfayers]
 - Initial commit. [alexfayers]
-
-
-
