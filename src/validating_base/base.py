@@ -22,7 +22,8 @@ class ValidatingBaseClassMeta(type):
     """Methods that must be validated in any child classes.
 
     The `validate_XXX` naming scheme should be used when creating a validation function.
-    All `validate_XXX` methods should accept a single argument, which is a `_CallMemo` object.
+    All `validate_XXX` methods should accept the same arguments as the method that they are validating, and return None.
+        They should raise an error if the arguments are not valid.
     """
 
     def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, Any]) -> type:
@@ -108,7 +109,8 @@ class ValidatingBaseClass(metaclass=ValidatingBaseClassMeta):
     """Methods that must be validated in any child classes.
 
     The `validate_XXX` naming scheme should be used when creating a validation function.
-    All `validate_XXX` methods should accept a single argument, which is a `_CallMemo` object.
+    All `validate_XXX` methods should accept the same arguments as the method that they are validating, and return None.
+        They should raise an error if the arguments are not valid.
     """
 
     _self_validated: bool = False

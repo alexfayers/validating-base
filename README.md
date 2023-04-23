@@ -35,7 +35,6 @@ If the first type checking step passes with no exceptions, then the `validate_ac
 Finally, the return type of the `action` method is validated using typeguard.
 
 ```py
-from typeguard import _CallMemo
 from validating_base import ValidatingBaseClass
 
 class ActionExample(ValidatingBaseClass):
