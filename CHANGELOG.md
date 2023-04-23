@@ -4,6 +4,12 @@ Changelog
 
 (main)
 ------
+- Patch docs. [alexfayers]
+
+
+v2.0.0 (2023-04-23)
+-------------------
+- Update CHANGELOG.md. [alexfayers]
 - Update requirements files. [alexfayers]
 - Merge pull request #1 from alexfayers:typeguard-update. [alexfayers]
 
