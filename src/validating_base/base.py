@@ -1,10 +1,12 @@
 """The main functionality of `validating-base`."""
 
+import warnings
 from functools import wraps
 from typing import Any
 from warnings import warn
 
 from typeguard import typechecked
+from typeguard._exceptions import InstrumentationWarning
 
 
 class ValidatingBaseClassMeta(type):
@@ -80,8 +82,9 @@ class ValidatingBaseClassMeta(type):
                 Returns:
                     Any: The return value of the decorated method
                 """
-                typechecked(validate_method)(*args, **kwargs)  # type: ignore[type-var,misc]
-                return typechecked(method)(*args, **kwargs)  # type: ignore[type-var,misc]
+                with warnings.catch_warnings(InstrumentationWarning):  # type: ignore[call-overload]
+                    typechecked(validate_method)(*args, **kwargs)  # type: ignore[type-var,misc]
+                    return typechecked(method)(*args, **kwargs)  # type: ignore[type-var,misc]
 
             setattr(new_class, method_name, _validated)
 
