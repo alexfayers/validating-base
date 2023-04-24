@@ -1,6 +1,5 @@
 """The main functionality of `validating-base`."""
 
-import inspect
 from functools import wraps
 from typing import Any
 from warnings import warn
@@ -164,14 +163,14 @@ class ValidatingBaseClass(metaclass=ValidatingBaseClassMeta):
 
                 # check that the validate method has the same argument signature as the validated method
 
-                validated_method_signature = inspect.signature(validated_method)
-                validator_method_signature = inspect.signature(validator_method)
+                # validated_method_signature = inspect.signature(validated_method)
+                # validator_method_signature = inspect.signature(validator_method)
 
-                if validated_method_signature.parameters != validator_method_signature.parameters:
-                    raise TypeError(
-                        f"The {validator_name} method must have the same argument signature as "
-                        f"the {validated_method_name} method."
-                    )
+                # if validated_method_signature.parameters != validator_method_signature.parameters:
+                #     raise TypeError(
+                #         f"The {validator_name} method must have the same argument signature as "
+                #         f"the {validated_method_name} method."
+                #     )
 
                 # check that the validate method has a return type of None
 
