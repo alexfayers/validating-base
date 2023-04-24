@@ -81,8 +81,8 @@ class ValidatingBaseClassMeta(type):
                 Returns:
                     Any: The return value of the decorated method
                 """
-                typechecked(validate_method)(*args, **kwargs)
-                return typechecked(method)(*args, **kwargs)
+                typechecked(validate_method)(*args, **kwargs)  # type: ignore[type-var,misc]
+                return typechecked(method)(*args, **kwargs)  # type: ignore[type-var,misc]
 
             setattr(new_class, method_name, _validated)
 

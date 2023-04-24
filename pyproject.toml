@@ -16,7 +16,6 @@ include = ["LICENSE", "src/validating_base/py.typed", "src/validating_base/VERSI
 # Main project dependencies.
 python = ">=3.9,<4.0"
 typeguard = "^3.0.2"
-mypy = "^1.2.0"
 
 [tool.poetry.group.dev.dependencies]
 # Linters for use during development (e.g. via vscode).
