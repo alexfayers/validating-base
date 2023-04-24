@@ -2,6 +2,19 @@ Changelog
 =========
 
 
+(main)
+------
+- Update requirements files. [Alex Fayers]
+- Update poetry.lock. [Alex Fayers]
+- Fix mypy typing. [Alex Fayers]
+- Remove debug prints. [Alex Fayers]
+
+
+v2.0.2 (2023-04-23)
+-------------------
+- Update CHANGELOG.md. [alexfayers]
+
+
 v2.0.1 (2023-04-23)
 -------------------
 - Update CHANGELOG.md. [alexfayers]
@@ -27,3 +40,6 @@ v1.0.0 (2023-04-22)
 - Init. [alexfayers]
 - Initialise project! [alexfayers]
 - Initial commit. [alexfayers]
+
+
+

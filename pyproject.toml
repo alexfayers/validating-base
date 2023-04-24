@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "validating-base"
-version = "2.0.2"
+version = "2.0.3"
 description = "An epic project called validating-base, by alexfayers!"
 authors = ["alexfayers <alexfayers@example.com>"]
 license = "MIT"
@@ -16,7 +16,6 @@ include = ["LICENSE", "src/validating_base/py.typed", "src/validating_base/VERSI
 # Main project dependencies.
 python = ">=3.9,<4.0"
 typeguard = "^3.0.2"
-mypy = "^1.2.0"
 
 [tool.poetry.group.dev.dependencies]
 # Linters for use during development (e.g. via vscode).
