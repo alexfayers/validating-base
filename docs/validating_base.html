@@ -245,8 +245,8 @@ validating_base    </h1>
 </span><span id="ValidatingBaseClass-176"><a href="#ValidatingBaseClass-176"><span class="linenos">176</span></a>
 </span><span id="ValidatingBaseClass-177"><a href="#ValidatingBaseClass-177"><span class="linenos">177</span></a>                <span class="c1"># check that the validate method has a return type of None</span>
 </span><span id="ValidatingBaseClass-178"><a href="#ValidatingBaseClass-178"><span class="linenos">178</span></a>
-</span><span id="ValidatingBaseClass-179"><a href="#ValidatingBaseClass-179"><span class="linenos">179</span></a>                <span class="k">if</span> <span class="n">validator_method_signature</span><span class="o">.</span><span class="n">return_annotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="ValidatingBaseClass-180"><a href="#ValidatingBaseClass-180"><span class="linenos">180</span></a>                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">validator_name</span><span class="si">}</span><span class="s2"> method must have a return type of None.&quot;</span><span class="p">)</span>
+</span><span id="ValidatingBaseClass-179"><a href="#ValidatingBaseClass-179"><span class="linenos">179</span></a>                <span class="c1"># if validator_method_signature.return_annotation is not None:</span>
+</span><span id="ValidatingBaseClass-180"><a href="#ValidatingBaseClass-180"><span class="linenos">180</span></a>                <span class="c1">#     raise TypeError(f&quot;The {validator_name} method must have a return type of None.&quot;)</span>
 </span><span id="ValidatingBaseClass-181"><a href="#ValidatingBaseClass-181"><span class="linenos">181</span></a>
 </span><span id="ValidatingBaseClass-182"><a href="#ValidatingBaseClass-182"><span class="linenos">182</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_self_validated</span> <span class="o">=</span> <span class="kc">True</span>
 </span></pre></div>
