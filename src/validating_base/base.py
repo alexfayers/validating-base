@@ -135,7 +135,6 @@ class ValidatingBaseClass(metaclass=ValidatingBaseClassMeta):
 
         if check_validated:
             for validated_method_name in self.validated_methods:
-                print(f"'{validated_method_name}'")
                 validated_method = getattr(self, validated_method_name, None)
                 if validated_method is None:
                     # this method isn't implemented, so we don't need to validate it
@@ -146,8 +145,6 @@ class ValidatingBaseClass(metaclass=ValidatingBaseClassMeta):
                     # remove the method from the validated methods list
                     self.validated_methods.remove(validated_method_name)
                     continue
-
-                print(validated_method)
 
                 if not callable(validated_method):
                     raise TypeError(f"The {validated_method_name} attribute must be a callable.")
