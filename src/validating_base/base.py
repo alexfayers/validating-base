@@ -175,7 +175,7 @@ class ValidatingBaseClass(metaclass=ValidatingBaseClassMeta):
 
                 # check that the validate method has a return type of None
 
-                if validator_method_signature.return_annotation is not None:
-                    raise TypeError(f"The {validator_name} method must have a return type of None.")
+                # if validator_method_signature.return_annotation is not None:
+                #     raise TypeError(f"The {validator_name} method must have a return type of None.")
 
         self._self_validated = True
