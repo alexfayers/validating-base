@@ -1,15 +1,18 @@
 """Example usages for the `validating_base.ValidatingBaseClass` class."""
 
+from abc import abstractmethod
+
 import pytest
 from typeguard import TypeCheckError
-from validating_base import ValidatingBaseClass
+from validating_base import ValidatingBaseClass, validated
 
 
 class ActionExample(ValidatingBaseClass):
-    """Shows an example usage of the `validating_base.ValidatingBaseClass` class."""
+    """Shows an example usage of the `validating_base.ValidatingBaseClass` class.
 
-    required_methods: list[str] = ["action"]
-    validated_methods: list[str] = ["action"]
+    Uses the `abstractmethod` for required methods, and the `validated` decorators instead of
+        the `validated_methods` class variable.
+    """
 
     def validate_action(self, number_list: list[int]) -> None:
         """Validate that the data to be processed is in the correct format.
@@ -21,9 +24,20 @@ class ActionExample(ValidatingBaseClass):
             TypeError: Raised if the data is not the correct type
             ValueError: Raised if the types are correct, but there is an issue in the formatting
         """
-        for number in number_list:
-            if not isinstance(number, int):
-                raise TypeError(f"{number} is not an integer")
+
+    @abstractmethod
+    @validated
+    def action(self, number_list: list[int]) -> int:
+        """Take a list of ints and sum all of the elements.
+
+        The validation method in this case is `ActionExample.validate_action`.
+
+        Args:
+            number_list (List[int]): The list of ints
+
+        Returns:
+            int: The sum of all elements in the list
+        """
 
 
 class AdderExample(ActionExample):
@@ -72,80 +86,34 @@ class InvalidExample(ActionExample):
     """A class that doesn't define an action method."""
 
 
-class BaseMissingValidator(ValidatingBaseClass):
-    """Needs a validated function but will fail."""
-
-    validated_methods: list[str] = ["action"]
-
-
-class MissingValidator(BaseMissingValidator):
+class MissingValidator(ValidatingBaseClass):
     """Define the action but not the validator."""
 
+    @validated
     def action(self, items: dict[str, str]) -> None:
-        """Validated."""
-
-
-class MissingValidatedAction(ValidatingBaseClass):
-    """Define the validator but not the action."""
-
-    validated_methods: list[str] = ["action"]
-
-    def validate_action(self, items: dict[str, str]) -> None:
-        """Validated."""
-
-
-class DifferentSignatures(ValidatingBaseClass):
-    """Different signatures for action and validator."""
-
-    validated_methods: list[str] = ["action"]
-
-    def action(self, items: dict[str, str]) -> None:
-        """Validated."""
-
-    def validate_action(self, items: int) -> None:
-        """Validated."""
-
-
-class ValidatorReturnsNotNone(ValidatingBaseClass):
-    """Different signatures for action and validator."""
-
-    validated_methods: list[str] = ["action"]
-
-    def action(self, items: dict[str, str]) -> None:
-        """Validated."""
-
-    def validate_action(self, items: dict[str, str]) -> int:  # type: ignore[empty-body]
         """Validated."""
 
 
 class NonCallableValidator(ValidatingBaseClass):
     """A validator that is not callable."""
 
-    validated_methods: list[str] = ["action"]
-
+    @validated
     def action(self, items: dict[str, str]) -> None:
         """Validated."""
 
     validate_action: int = 1
 
 
-class NonCallableAction(ValidatingBaseClass):
-    """An action that is not callable."""
+class DeprecatedRequired(ValidatingBaseClass):
+    """Deprecated usage."""
 
-    validated_methods: list[str] = ["action"]
-
-    action: int = 1
-
-    def validate_action(self, items: dict[str, str]) -> None:
-        """Validated."""
+    required_methods: list[str] = []
 
 
-class RequiredNonCallable(ValidatingBaseClass):
-    """A required method that is not callable."""
+class DeprecatedValidated(ValidatingBaseClass):
+    """Deprecated usage."""
 
-    required_methods: list[str] = ["action"]
-
-    action: int = 1
+    validated_methods: list[str] = []
 
 
 def test_adder() -> None:
@@ -172,8 +140,8 @@ def test_multiplier() -> None:
 
 def test_missing_required() -> None:
     """Tests that a class with a missing requirement raises an error."""
-    with pytest.raises(NotImplementedError, match="method must be defined"):
-        InvalidExample()
+    with pytest.raises(TypeError, match="Can't instantiate abstract class"):
+        InvalidExample()  # type: ignore[abstract]
 
 
 def test_missing_validator() -> None:
@@ -182,37 +150,19 @@ def test_missing_validator() -> None:
         MissingValidator()
 
 
-def test_missing_validated_action() -> None:
-    """Tests that a class with a missing requirement raises an error."""
-    with pytest.warns(match="method is not implemented"):
-        MissingValidatedAction()
-
-
-# def test_different_signatures() -> None:
-#     """Tests a validator and an action having different signatures."""
-#     with pytest.raises(TypeError, match="must have the same argument signature as"):
-#         DifferentSignatures()
-
-
-# def test_validator_returns_not_none() -> None:
-#     """Tests a validator returning a value."""
-#     with pytest.raises(TypeError, match="must have a return type of None"):
-#         ValidatorReturnsNotNone()
-
-
 def test_non_callable_validator() -> None:
     """Tests a validator that is not callable."""
     with pytest.raises(TypeError, match="must be a callable"):
         NonCallableValidator()
 
 
-def test_non_callable_action() -> None:
-    """Tests an action that is not callable."""
-    with pytest.raises(TypeError, match="must be a callable"):
-        NonCallableAction()
+def test_deprecated_required() -> None:
+    """Tests that deprecated usage results in an error."""
+    with pytest.raises(DeprecationWarning):
+        DeprecatedRequired()
 
 
-def test_required_non_callable() -> None:
-    """Tests a required method that is not callable."""
-    with pytest.raises(TypeError, match="must be a callable"):
-        RequiredNonCallable()
+def test_deprecated_validated() -> None:
+    """Tests that deprecated usage results in an error."""
+    with pytest.raises(DeprecationWarning):
+        DeprecatedValidated()

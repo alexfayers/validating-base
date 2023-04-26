@@ -1,13 +1,56 @@
 """The main functionality of `validating-base`."""
+from __future__ import annotations
 
-from functools import wraps
-from typing import Any
-from warnings import warn
+from abc import ABCMeta
+from typing import TYPE_CHECKING, Any
 
-from typeguard import typechecked
+from validating_base.decorators_internal import prerun_validated, type_validated, validate_init
+
+if TYPE_CHECKING:
+    from .types import C
 
 
-class ValidatingBaseClassMeta(type):
+def ensure_required_attributes(cls: C) -> C:
+    """Ensure that the class has the attributes that we're expecting."""
+    if not hasattr(cls, "_self_validated"):
+        cls._self_validated = False  # type: ignore[attr-defined]
+
+    return cls
+
+
+def update_init(cls: C) -> C:
+    """Install the validate_init decorator on `__init__`."""
+    cls.__init__ = validate_init(cls.__init__)  # type: ignore[misc]
+    return cls
+
+
+def update_validated_methods(cls: C) -> C:
+    """Update the `__prerun_validated_methods__` and `__type_validated_methods__` attributes."""
+    prerun_validated_methods = set()
+    type_validated_methods = set()
+
+    # Check the existing validated methods of the parents and add them to the validated methods
+    for scls in cls.__bases__:  # type: ignore[attr-defined]
+        for name in getattr(scls, "__prerun_validated_methods__", ()):
+            prerun_validated_methods.add(name)
+
+        for name in getattr(scls, "__type_validated_methods__", ()):
+            type_validated_methods.add(name)
+
+    # Also add any other newly added validated methods.
+    for name, value in cls.__dict__.items():
+        if getattr(value, "__is_runtime_prerun_validated__", False):
+            prerun_validated_methods.add(name)
+
+        if getattr(value, "__is_runtime_type_validated__", False):
+            type_validated_methods.add(name)
+
+    cls.__prerun_validated_methods__ = frozenset(prerun_validated_methods)  # type: ignore[attr-defined]
+    cls.__type_validated_methods__ = frozenset(type_validated_methods)  # type: ignore[attr-defined]
+    return cls
+
+
+class ValidatingBaseClassMeta(ABCMeta):
     """Metaclass to create a class which automatically validates itself.
 
     All of the methods in the `validated_methods` attribute will be validated using the `typeguard` library.
@@ -15,75 +58,23 @@ class ValidatingBaseClassMeta(type):
     This metaclass is used by the `ValidatingBaseClass` class.
     """
 
-    required_methods: list[str]
-    """Methods that must be implemented in any child classes"""
-    validated_methods: list[str]
-    """Methods that must be validated in any child classes.
-
-    The `validate_XXX` naming scheme should be used when creating a validation function.
-    All `validate_XXX` methods should accept the same arguments as the method that they are validating, and return None.
-        They should raise an error if the arguments are not valid.
-    """
-
-    def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, Any]) -> type:
+    def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, Any], /, **kwargs: Any) -> type:
         """Create a new class.
 
         Args:
             name (str): The name of the class
             bases (tuple[type, ...]): The base classes
             attrs (dict[str, Any]): The attributes of the class
+            **kwargs (Any): Arbitrary keyword argmuents.
 
         Returns:
             type: The new class
         """
-        new_class = super().__new__(cls, name, bases, attrs)
+        new_class = super().__new__(cls, name, bases, attrs, **kwargs)
 
-        new_class_init = getattr(new_class, "__init__")
-
-        @wraps(new_class_init)
-        def _validate_init(self: Any, *args: Any, **kwargs: Any) -> None:
-            if not self._self_validated:
-                self._validate_self(check_required=True, check_validated=True)
-
-            new_class_init(self, *args, **kwargs)
-
-        setattr(new_class, "__init__", _validate_init)
-
-        # wrap all of the methods that need to be validated with the typechecked decorator
-        for method_name in new_class.validated_methods:
-            method = getattr(new_class, method_name, None)
-            if method is None:
-                # this method is not implemented in the child class, so we can't validate it
-                # will show a warning when the child class is instantiated without this method
-                continue
-
-            if not callable(method):
-                # this method is not callable, so we can't validate it
-                # will raise an error when the child class is instantiated
-                continue
-
-            validate_method = getattr(new_class, f"validate_{method_name}", None)
-            if validate_method is None:
-                # this method is not implemented in the child class, so we can't use it to validate
-                # will raise an error when the child class is instantiated without this method
-                continue
-
-            if not callable(validate_method):
-                # this method is not callable, so we can't validate it
-                # will raise an error when the child class is instantiated
-                continue
-
-            @wraps(method)
-            def _validated(*args: Any, **kwargs: Any) -> Any:
-                """Decorator that runs the specified validator before the decorated method.
-
-                Returns:
-                    Any: The return value of the decorated method
-                """
-                typechecked(validate_method)(*args, **kwargs)  # type: ignore[type-var,misc]
-                return typechecked(method)(*args, **kwargs)  # type: ignore[type-var,misc]
-
-            setattr(new_class, method_name, _validated)
+        new_class = ensure_required_attributes(new_class)
+        new_class = update_init(new_class)
+        new_class = update_validated_methods(new_class)
 
         return new_class
 
@@ -91,90 +82,63 @@ class ValidatingBaseClassMeta(type):
 class ValidatingBaseClass(metaclass=ValidatingBaseClassMeta):
     """A class which automatically validates itself.
 
-    The inputs and outputs of specified methods are validated through the use of the `validated_methods` class variable,
-    and any methods are are required to be implemented in child classes are defined within the `required_methods`
-    class variable.
+    The inputs and outputs of specified methods are validated through the use of the `validated` decorator.
 
-    A NotImplementedError is raised if a required method is not implemented in a child class.
     A TypeError is raised if the input arguments to a validated method are not of the correct type.
     A TypeError is raised if return value to a validated method is not of the correct type.
 
     Example usage can be seen in `validating_base.examples`.
     """
 
-    required_methods: list[str] = []
-    """Methods that must be implemented in any child classes"""
-    validated_methods: list[str] = []
-    """Methods that must be validated in any child classes.
-
-    The `validate_XXX` naming scheme should be used when creating a validation function.
-    All `validate_XXX` methods should accept the same arguments as the method that they are validating, and return None.
-        They should raise an error if the arguments are not valid.
-    """
-
-    _self_validated: bool = False
+    _self_validated: bool
     """Internal flag to indicate whether the class itself has been validated."""
 
-    def _validate_self(self, check_required: bool = True, check_validated: bool = True) -> None:
+    def _validate_self(self) -> None:
         """Validate that the class has the specified methods defined.
 
-        Reads the required method from the `ValidatingBaseClass.required_methods` attribute.
-
         Raises:
-            NotImplementedError: Raised if a required method is not defined.
+            NotImplementedError: Raised if a method is not defined.
         """
-        if check_required:
-            for required_method_name in self.required_methods:
-                method = getattr(self, required_method_name, None)
-                if method is None:
-                    raise NotImplementedError(f"The {required_method_name} method must be defined.")
+        if getattr(self, "validated_methods", None) is not None:
+            raise DeprecationWarning(
+                "The validated_methods attribute is deprecated. Use the `validating_base.validated` decorator instead."
+            )
 
-                if not callable(method):
-                    raise TypeError(f"The {required_method_name} attribute must be a callable.")
+        if getattr(self, "required_methods", None) is not None:
+            raise DeprecationWarning(
+                "The required_methods attribute is deprecated. Use the `abc.abstractmethod` decorator instead."
+            )
 
-        if check_validated:
-            for validated_method_name in self.validated_methods:
-                validated_method = getattr(self, validated_method_name, None)
-                if validated_method is None:
-                    # this method isn't implemented, so we don't need to validate it
-                    warn(
-                        f"The {validated_method_name} method is not implemented, but is "
-                        "specified in the validated_methods attribute. It will not be validated."
-                    )
-                    # remove the method from the validated methods list
-                    self.validated_methods.remove(validated_method_name)
-                    continue
+        for validated_method_name in self.__prerun_validated_methods__:
+            # check that the validate method exists for this method
 
-                if not callable(validated_method):
-                    raise TypeError(f"The {validated_method_name} attribute must be a callable.")
+            validator_name = f"validate_{validated_method_name}"
+            validator_method = getattr(self, validator_name, None)
 
-                # check that the validate method exists for this method
+            if validator_method is None:
+                raise NotImplementedError(
+                    f"The {validator_name} method must be defined for the {validated_method_name} method."
+                )
 
-                validator_name = f"validate_{validated_method_name}"
-                validator_method = getattr(self, validator_name, None)
-
-                if validator_method is None:
-                    raise NotImplementedError(
-                        f"The {validator_name} method must be defined for the {validated_method_name} method."
-                    )
-
-                if not callable(validator_method):
-                    raise TypeError(f"The {validator_name} attribute must be a callable.")
-
-                # check that the validate method has the same argument signature as the validated method
-
-                # validated_method_signature = inspect.signature(validated_method)
-                # validator_method_signature = inspect.signature(validator_method)
-
-                # if validated_method_signature.parameters != validator_method_signature.parameters:
-                #     raise TypeError(
-                #         f"The {validator_name} method must have the same argument signature as "
-                #         f"the {validated_method_name} method."
-                #     )
-
-                # check that the validate method has a return type of None
-
-                # if validator_method_signature.return_annotation is not None:
-                #     raise TypeError(f"The {validator_name} method must have a return type of None.")
+            if not callable(validator_method):
+                raise TypeError(f"The {validator_name} attribute must be a callable.")
 
         self._self_validated = True
+
+    def __getattribute__(self, __name: str) -> Any:
+        """Get an attribute from the class, and decorate any validated methods with their validation methods.."""
+        method = super().__getattribute__(__name)
+
+        if __name in ["_self_validated", "__prerun_validated_methods__", "__type_validated_methods__"]:
+            return method
+
+        if callable(method) and self._self_validated:
+            if __name in self.__prerun_validated_methods__:
+                validator_name = f"validate_{__name}"
+                validator = super().__getattribute__(validator_name)
+                method = prerun_validated(validator)(method)
+
+            if __name in self.__type_validated_methods__:
+                method = type_validated(method)
+
+        return method

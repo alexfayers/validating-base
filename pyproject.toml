@@ -15,7 +15,7 @@ include = ["LICENSE", "src/validating_base/py.typed", "src/validating_base/VERSI
 [tool.poetry.dependencies]
 # Main project dependencies.
 python = ">=3.9,<4.0"
-typeguard = "^3.0.2"
+typeguard = "^4.0.0rc4"
 
 [tool.poetry.group.dev.dependencies]
 # Linters for use during development (e.g. via vscode).
@@ -33,6 +33,7 @@ pytest-cov = "^4.0.0"
 [tool.poetry.group.lint.dependencies]
 # For linting via tox.
 pre-commit = "^3.2.2"
+mypy = "^1.2.0"
 
 [tool.poetry.group.poetry-plugins.dependencies]
 # Poetry plugins for the project.
@@ -84,6 +85,10 @@ warn_unreachable = true
 strict_equality = true
 pretty = true
 exclude = '(?x)( ^setup\.py$ | ^__pycache__ | ^build )'
+
+[tool.coverage.report]
+exclude_lines = ["if TYPE_CHECKING:"]
+
 
 [tool.ruff]
 select = ["E", "F", "I", "D", "UP", "TCH", "PT", "ANN"]
