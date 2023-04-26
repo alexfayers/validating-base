@@ -623,14 +623,14 @@ lxml = ["lxml"]
 
 [[package]]
 name = "identify"
-version = "2.5.22"
+version = "2.5.23"
 description = "File identification library for Python"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "identify-2.5.22-py2.py3-none-any.whl", hash = "sha256:f0faad595a4687053669c112004178149f6c326db71ee999ae4636685753ad2f"},
-    {file = "identify-2.5.22.tar.gz", hash = "sha256:f7a93d6cf98e29bd07663c60728e7a4057615068d7a639d132dc883b2d54d31e"},
+    {file = "identify-2.5.23-py2.py3-none-any.whl", hash = "sha256:17d9351c028a781456965e781ed2a435755cac655df1ebd930f7186b54399312"},
+    {file = "identify-2.5.23.tar.gz", hash = "sha256:50b01b9d5f73c6b53e5fa2caf9f543d3e657a9d0bbdeb203ebb8d45960ba7433"},
 ]
 
 [package.extras]
@@ -1789,14 +1789,14 @@ jeepney = ">=0.6"
 
 [[package]]
 name = "setuptools"
-version = "67.7.1"
+version = "67.7.2"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "setuptools-67.7.1-py3-none-any.whl", hash = "sha256:6f0839fbdb7e3cfef1fc38d7954f5c1c26bf4eebb155a55c9bf8faf997b9fb67"},
-    {file = "setuptools-67.7.1.tar.gz", hash = "sha256:bb16732e8eb928922eabaa022f881ae2b7cdcfaf9993ef1f5e841a96d32b8e0c"},
+    {file = "setuptools-67.7.2-py3-none-any.whl", hash = "sha256:23aaf86b85ca52ceb801d32703f12d77517b2556af839621c641fca11287952b"},
+    {file = "setuptools-67.7.2.tar.gz", hash = "sha256:f104fa03692a2602fa0fec6c6a9e63b6c8a968de13e17c026957dd1f53d80990"},
 ]
 
 [package.extras]
@@ -1869,26 +1869,26 @@ files = [
 
 [[package]]
 name = "trove-classifiers"
-version = "2023.4.22"
+version = "2023.4.25"
 description = "Canonical source for classifiers on PyPI (pypi.org)."
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "trove-classifiers-2023.4.22.tar.gz", hash = "sha256:65e8cb3929e3788141db90a0776b76fcafbeb548a4fbe6aee4bfd9656e899939"},
-    {file = "trove_classifiers-2023.4.22-py3-none-any.whl", hash = "sha256:f8823bc4b002fb60ad102f1a97fbb0086efe149123f5701bcbae93d330321cca"},
+    {file = "trove-classifiers-2023.4.25.tar.gz", hash = "sha256:a3a9034e4902772431c1efa111f83367be5052441a245e465e78ec38c795c2c9"},
+    {file = "trove_classifiers-2023.4.25-py3-none-any.whl", hash = "sha256:d9f453498bbf100382fbd976f9d1c1288274910d0ec876a54e7e03479839afe9"},
 ]
 
 [[package]]
 name = "typeguard"
-version = "3.0.2"
+version = "4.0.0rc4"
 description = "Run-time type checker for Python"
 category = "main"
 optional = false
 python-versions = ">=3.7.4"
 files = [
-    {file = "typeguard-3.0.2-py3-none-any.whl", hash = "sha256:bbe993854385284ab42fd5bd3bee6f6556577ce8b50696d6cb956d704f286c8e"},
-    {file = "typeguard-3.0.2.tar.gz", hash = "sha256:fee5297fdb28f8e9efcb8142b5ee219e02375509cd77ea9d270b5af826358d5a"},
+    {file = "typeguard-4.0.0rc4-py3-none-any.whl", hash = "sha256:9d1992048fc6425bf223b4362c23fedefac3746f0ec01f5dc93c20beaa0c823f"},
+    {file = "typeguard-4.0.0rc4.tar.gz", hash = "sha256:a1d130a63b056255f6b401fdb731ce38e8f49e12dbfea38096794b6642ddad0e"},
 ]
 
 [package.dependencies]
@@ -1897,7 +1897,7 @@ typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.11\""}
 
 [package.extras]
 doc = ["packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
-test = ["mypy (>=0.991)", "pytest (>=7)"]
+test = ["mypy (>=1.2.0)", "pytest (>=7)"]
 
 [[package]]
 name = "typing-extensions"
@@ -2086,4 +2086,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4.0"
-content-hash = "0fb3d8e7466aedfab6b60aee7f43391cad408320a4f319691a6af9f560a8fcf9"
+content-hash = "5ce997c61c7e1ab521201ea2cb00541db5070cc6c22bade5e9a6c5d0668b05c5"
