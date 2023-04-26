@@ -4,12 +4,14 @@ from __future__ import annotations
 import inspect
 import sys
 from functools import wraps
-from typing import TYPE_CHECKING, Callable, Concatenate
+from typing import TYPE_CHECKING, Callable
 
 from typeguard import TypeCheckMemo
 from typeguard._functions import check_argument_types, check_return_type
 
 if TYPE_CHECKING:
+    from typing_extensions import Concatenate
+
     from .base import ValidatingBaseClass
     from .types import P, R
 

@@ -4,6 +4,43 @@ Changelog
 
 (main)
 ------
+- Merge pull request #7 from alex-flnx/main. [alexfayers]
+
+  Support for latest typeguard, ABCs as a base, and decorators instead of class variables
+- Fix py 3.9 support. [Alex Fayers]
+- Linting. [Alex Fayers]
+- Merge pull request #6 from alex-flnx/main. [alexfayers]
+
+  nevermind
+- Merge pull request #5 from alex-flnx/main. [alexfayers]
+
+  catch warnings
+- Merge pull request #4 from alex-flnx/main. [alexfayers]
+
+  disable signature verification, it's bad in prod
+- Split up pre-run and type validation. [Alex Fayers]
+- Move import. [Alex Fayers]
+- Deprecate classvar usage - decorators only now. [Alex Fayers]
+- Changes to support typeguard v4. [Alex Fayers]
+- Bump typeguard to v4 release candidate. [Alex Fayers]
+- Drop mypy from precommit and add to tox again. [Alex Fayers]
+- Update requirements files. [Alex Fayers]
+- Update poetry.lock. [Alex Fayers]
+- Nevermind. [Alex Fayers]
+- Merge pull request #3 from alex-flnx/main. [alexfayers]
+
+  remove return none check
+- Merge pull request #2 from alex-flnx/main. [alexfayers]
+
+  Fix pre-commit linting and remove debug prints
+- Catch warnings. [Alex Fayers]
+- Disable signature verification. [Alex Fayers]
+- Remove return none check. [Alex Fayers]
+
+
+v2.0.3 (2023-04-24)
+-------------------
+- Update CHANGELOG.md. [Alex Fayers]
 - Update requirements files. [Alex Fayers]
 - Update poetry.lock. [Alex Fayers]
 - Fix mypy typing. [Alex Fayers]
