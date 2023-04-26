@@ -4,8 +4,7 @@ from abc import abstractmethod
 
 import pytest
 from typeguard import TypeCheckError
-from validating_base import ValidatingBaseClass
-from validating_base.decorators import validated
+from validating_base import ValidatingBaseClass, validated
 
 
 class ActionExample(ValidatingBaseClass):
