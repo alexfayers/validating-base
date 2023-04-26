@@ -18,6 +18,7 @@ def validate_init(
     function: Callable[Concatenate[ValidatingBaseClass, P], R]
 ) -> Callable[Concatenate[ValidatingBaseClass, P], R]:
     """Make the decorated function call `_validate_self` before executing."""
+
     @wraps(function)
     def inner(self: ValidatingBaseClass, *args: P.args, **kwargs: P.kwargs) -> R:
         if not self._self_validated:
@@ -29,7 +30,7 @@ def validate_init(
 
 def prerun_validated(validation_method: Callable[P, None]) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Validate the decorated method with the supplied validation method.
-    
+
     The validation method must be a method that accepts the same parameters as the decorated method.
     The validation method raise an exception if there's any validation errors.
 
@@ -42,15 +43,18 @@ def prerun_validated(validation_method: Callable[P, None]) -> Callable[[Callable
         def inner(*args: P.args, **kwargs: P.kwargs) -> R:
             validation_method(*args, **kwargs)
             return function(*args, **kwargs)
+
         return inner
+
     return outer
 
 
 def type_validated(function: Callable[P, R]) -> Callable[P, R]:
     """Validate the argument and return types of the decorated method.
-    
+
     If used in conjunction with `prerun_validated`, this should be executed 2nd.
     """
+
     @wraps(function)
     def inner(*args: P.args, **kwargs: P.kwargs) -> R:
         # Get the decorated function's name

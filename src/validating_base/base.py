@@ -28,20 +28,20 @@ def update_validated_methods(cls: C) -> C:
     """Update the `__prerun_validated_methods__` and `__type_validated_methods__` attributes."""
     prerun_validated_methods = set()
     type_validated_methods = set()
-    
+
     # Check the existing validated methods of the parents and add them to the validated methods
     for scls in cls.__bases__:  # type: ignore[attr-defined]
         for name in getattr(scls, "__prerun_validated_methods__", ()):
             prerun_validated_methods.add(name)
-            
+
         for name in getattr(scls, "__type_validated_methods__", ()):
             type_validated_methods.add(name)
-            
+
     # Also add any other newly added validated methods.
     for name, value in cls.__dict__.items():
         if getattr(value, "__is_runtime_prerun_validated__", False):
             prerun_validated_methods.add(name)
-        
+
         if getattr(value, "__is_runtime_type_validated__", False):
             type_validated_methods.add(name)
 
@@ -103,7 +103,7 @@ class ValidatingBaseClass(metaclass=ValidatingBaseClassMeta):
             raise DeprecationWarning(
                 "The validated_methods attribute is deprecated. Use the `validating_base.validated` decorator instead."
             )
-            
+
         if getattr(self, "required_methods", None) is not None:
             raise DeprecationWarning(
                 "The required_methods attribute is deprecated. Use the `abc.abstractmethod` decorator instead."
@@ -137,7 +137,7 @@ class ValidatingBaseClass(metaclass=ValidatingBaseClassMeta):
                 validator_name = f"validate_{__name}"
                 validator = super().__getattribute__(validator_name)
                 method = prerun_validated(validator)(method)
-                
+
             if __name in self.__type_validated_methods__:
                 method = type_validated(method)
 

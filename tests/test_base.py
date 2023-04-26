@@ -106,11 +106,13 @@ class NonCallableValidator(ValidatingBaseClass):
 
 class DeprecatedRequired(ValidatingBaseClass):
     """Deprecated usage."""
+
     required_methods: list[str] = []
 
 
 class DeprecatedValidated(ValidatingBaseClass):
     """Deprecated usage."""
+
     validated_methods: list[str] = []
 
 

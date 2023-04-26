@@ -27,4 +27,3 @@ def validated(function: Callable[P, R]) -> Callable[P, R]:
     function = prerun_validated(function)
     function = type_validated(function)
     return function
-
