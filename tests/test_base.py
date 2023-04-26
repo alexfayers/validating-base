@@ -1,15 +1,18 @@
 """Example usages for the `validating_base.ValidatingBaseClass` class."""
 
+from abc import abstractmethod
+
 import pytest
 from typeguard import TypeCheckError
-from validating_base import ValidatingBaseClass
+from validating_base import ValidatingBaseClass, validated
 
 
 class ActionExample(ValidatingBaseClass):
-    """Shows an example usage of the `validating_base.ValidatingBaseClass` class."""
+    """Shows an example usage of the `validating_base.ValidatingBaseClass` class.
 
-    required_methods: list[str] = ["action"]
-    validated_methods: list[str] = ["action"]
+    Uses the `abstractmethod` and `validated` decorators instead of the
+        `required_methods` and `validated_methods` class variables.
+    """
 
     def validate_action(self, number_list: list[int]) -> None:
         """Validate that the data to be processed is in the correct format.
@@ -24,6 +27,20 @@ class ActionExample(ValidatingBaseClass):
         for number in number_list:
             if not isinstance(number, int):
                 raise TypeError(f"{number} is not an integer")
+
+    @abstractmethod
+    @validated
+    def action(self, number_list: list[int]) -> int:
+        """Take a list of ints and sum all of the elements.
+
+        The validation method in this case is `ActionExample.validate_action`.
+
+        Args:
+            number_list (List[int]): The list of ints
+
+        Returns:
+            int: The sum of all elements in the list
+        """
 
 
 class AdderExample(ActionExample):
@@ -94,30 +111,6 @@ class MissingValidatedAction(ValidatingBaseClass):
         """Validated."""
 
 
-class DifferentSignatures(ValidatingBaseClass):
-    """Different signatures for action and validator."""
-
-    validated_methods: list[str] = ["action"]
-
-    def action(self, items: dict[str, str]) -> None:
-        """Validated."""
-
-    def validate_action(self, items: int) -> None:
-        """Validated."""
-
-
-class ValidatorReturnsNotNone(ValidatingBaseClass):
-    """Different signatures for action and validator."""
-
-    validated_methods: list[str] = ["action"]
-
-    def action(self, items: dict[str, str]) -> None:
-        """Validated."""
-
-    def validate_action(self, items: dict[str, str]) -> int:  # type: ignore[empty-body]
-        """Validated."""
-
-
 class NonCallableValidator(ValidatingBaseClass):
     """A validator that is not callable."""
 
@@ -172,8 +165,8 @@ def test_multiplier() -> None:
 
 def test_missing_required() -> None:
     """Tests that a class with a missing requirement raises an error."""
-    with pytest.raises(NotImplementedError, match="method must be defined"):
-        InvalidExample()
+    with pytest.raises(TypeError, match="Can't instantiate abstract class"):
+        InvalidExample()  # type: ignore[abstract]
 
 
 def test_missing_validator() -> None:
@@ -186,18 +179,6 @@ def test_missing_validated_action() -> None:
     """Tests that a class with a missing requirement raises an error."""
     with pytest.warns(match="method is not implemented"):
         MissingValidatedAction()
-
-
-# def test_different_signatures() -> None:
-#     """Tests a validator and an action having different signatures."""
-#     with pytest.raises(TypeError, match="must have the same argument signature as"):
-#         DifferentSignatures()
-
-
-# def test_validator_returns_not_none() -> None:
-#     """Tests a validator returning a value."""
-#     with pytest.raises(TypeError, match="must have a return type of None"):
-#         ValidatorReturnsNotNone()
 
 
 def test_non_callable_validator() -> None:
@@ -216,3 +197,7 @@ def test_required_non_callable() -> None:
     """Tests a required method that is not callable."""
     with pytest.raises(TypeError, match="must be a callable"):
         RequiredNonCallable()
+
+
+if __name__ == "__main__":
+    test_adder()
