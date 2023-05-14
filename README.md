@@ -1,8 +1,8 @@
 # validating-base
 
-A simple Validating Base Class library. Enables runtime validation of argument types using typeguard.
+A simple Validating Base Class library. Enables runtime validation of argument types using [typeguard](https://pypi.org/project/typeguard/).
 
-All you need to do is inherit from the `ValidatingBaseClass` class, type hint ([more info](https://docs.python.org/3/library/typing.html)) all the methods, and then specify the methods that you want to validate.
+All you need to do is inherit from the [`validating_base.ValidatingBaseClass`](./src/validating_base/base.py?plain=1#L82) class, type hint ([more info](https://docs.python.org/3/library/typing.html)) all the methods, and then specify the methods that you want to validate using the decorators found in the [`validating_base.decorators`](./src/validating_base/decorators.py) module.
 
 See the [tests](./tests/test_base.py) for some better examples of usage.
 
