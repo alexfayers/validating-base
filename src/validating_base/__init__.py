@@ -1,5 +1,5 @@
 """.. include:: ../../README.md"""  # noqa
-__version__ = "3.0.0"
+__version__ = "3.1.0"
 
 from .base import ValidatingBaseClass
 from .decorators import prerun_validated, type_validated, validated
