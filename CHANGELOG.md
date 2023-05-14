@@ -4,6 +4,19 @@ Changelog
 
 (main)
 ------
+- Update requirements files. [alexfayers]
+- Update deps - use typeguard 4.0.0. [alexfayers]
+- Fix cov. [alexfayers]
+- Update readme. [alexfayers]
+
+
+v3.0.0 (2023-04-26)
+-------------------
+- Merge pull request #8 from alex-flnx/main. [alexfayers]
+
+  Fix python 3.9 support
+- Linting. [Alex Fayers]
+- Update CHANGELOG.md. [Alex Fayers]
 - Merge pull request #7 from alex-flnx/main. [alexfayers]
 
   Support for latest typeguard, ABCs as a base, and decorators instead of class variables
@@ -30,9 +43,6 @@ Changelog
 - Merge pull request #3 from alex-flnx/main. [alexfayers]
 
   remove return none check
-- Merge pull request #2 from alex-flnx/main. [alexfayers]
-
-  Fix pre-commit linting and remove debug prints
 - Catch warnings. [Alex Fayers]
 - Disable signature verification. [Alex Fayers]
 - Remove return none check. [Alex Fayers]
@@ -40,6 +50,9 @@ Changelog
 
 v2.0.3 (2023-04-24)
 -------------------
+- Merge pull request #2 from alex-flnx/main. [alexfayers]
+
+  Fix pre-commit linting and remove debug prints
 - Update CHANGELOG.md. [Alex Fayers]
 - Update requirements files. [Alex Fayers]
 - Update poetry.lock. [Alex Fayers]
@@ -77,3 +90,6 @@ v1.0.0 (2023-04-22)
 - Init. [alexfayers]
 - Initialise project! [alexfayers]
 - Initial commit. [alexfayers]
+
+
+
